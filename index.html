@@ -8,202 +8,82 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <style>
         /* [Common Design System] */
-        :root {
-            --color-navy-deep: #0a1128;
-            --color-navy: #14213d;
-            --color-gold: #c5a065; 
-            --color-gold-light: #e6d2b5;
-            --color-red: #9e1b27;
-            --color-bg-main: #f3f4f6;
-            --color-white: #ffffff;
-            --color-text-dark: #1a1a1a;
-            --font-serif: 'Noto Serif KR', serif;
-            --font-sans: 'Pretendard', sans-serif;
-            --shadow-card: 0 15px 35px -5px rgba(0, 0, 0, 0.1);
-        }
-
+        :root { --color-navy-deep: #0a1128; --color-navy: #14213d; --color-gold: #c5a065; --color-gold-light: #e6d2b5; --color-red: #9e1b27; --color-bg-main: #f3f4f6; --color-white: #ffffff; --color-text-dark: #1a1a1a; --font-serif: 'Noto Serif KR', serif; --font-sans: 'Pretendard', sans-serif; --shadow-card: 0 15px 35px -5px rgba(0, 0, 0, 0.1); }
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        
-        body {
-            font-family: var(--font-sans);
-            background-color: var(--color-bg-main);
-            color: var(--color-text-dark);
-            line-height: 1.75;
-            word-break: keep-all;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-        }
-
-        /* --- Utility Classes --- */
+        body { font-family: var(--font-sans); background-color: var(--color-bg-main); color: var(--color-text-dark); line-height: 1.75; word-break: keep-all; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"); }
         .hidden { display: none !important; }
         .container { max-width: 900px; margin: 0 auto; min-height: 100vh; background: #fff; box-shadow: 0 0 50px rgba(0,0,0,0.1); position: relative; }
-
-        /* =========================================
-           1. Main Page (Lobby) Styles
-           ========================================= */
-        #main-view { padding-bottom: 5rem; }
-
-        .main-header {
-            background: linear-gradient(160deg, var(--color-navy-deep) 0%, var(--color-navy) 100%);
-            color: white; padding: 4rem 2rem; text-align: center;
-            border-bottom: 4px solid var(--color-gold);
-        }
-
-        .main-logo-text {
-            font-family: var(--font-serif); font-size: 2.2rem; font-weight: 900;
-            background: linear-gradient(90deg, var(--color-gold-light), var(--color-gold));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem; letter-spacing: -1px;
-        }
-
-        .main-slogan {
-            font-size: 1.1rem; opacity: 0.8; font-weight: 300; letter-spacing: 0.2em;
-        }
-
-        /* Faculty Title */
-        .faculty-title {
-            margin-top: 25px; 
-            font-size: 1rem; 
-            color: var(--color-gold); 
-            text-transform: uppercase; 
-            letter-spacing: 3px; 
-            font-weight: 600;
-            position: relative;
-            display: inline-block;
-        }
-        .faculty-title::after {
-            content: ''; display: block; width: 40px; height: 1px; 
-            background: var(--color-gold); margin: 8px auto 0; opacity: 0.5;
-        }
-
-        .teacher-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
-            padding: 3rem 2rem; max-width: 900px; margin: 0 auto;
-        }
-
-        .teacher-card-btn {
-            background: white; border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 8px; padding: 2.5rem 1rem; cursor: pointer;
-            box-shadow: var(--shadow-card); transition: all 0.3s ease;
-            text-align: center; position: relative; overflow: hidden;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-height: 180px; 
-        }
-
-        /* Empty Slot Style */
-        .teacher-card-btn.empty-slot {
-            box-shadow: none; border: 1px dashed rgba(0,0,0,0.1);
-            background: rgba(0,0,0,0.01); cursor: default;
-        }
-        .teacher-card-btn.empty-slot:hover { transform: none; }
-        .teacher-card-btn.empty-slot::before { display: none; }
-
-        .teacher-card-btn:not(.empty-slot)::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
-            background: var(--color-navy); transition: 0.3s;
-        }
-
-        .teacher-card-btn:not(.empty-slot):hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        .teacher-card-btn:not(.empty-slot):hover::before { background: var(--color-gold); height: 5px; }
-
-        .t-subject {
-            font-size: 0.8rem; color: var(--color-gold); font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.8rem;
-        }
-        .t-name {
-            font-family: var(--font-serif); font-size: 1.6rem; font-weight: 900; color: var(--color-navy-deep);
-            word-break: keep-all;
-        }
-
-        /* =========================================
-           2. Detail Page (Individual) Styles
-           ========================================= */
-        .nav-bar { position: absolute; top: 20px; left: 20px; z-index: 100; }
-        .back-btn {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
-            color: white; padding: 8px 16px; border-radius: 30px; cursor: pointer;
-            font-size: 0.9rem; backdrop-filter: blur(5px); transition: 0.2s;
-            display: flex; align-items: center; gap: 5px;
-        }
-        .back-btn:hover { background: white; color: var(--color-navy); }
-
-        .detail-header {
-            background: linear-gradient(160deg, var(--color-navy-deep) 0%, var(--color-navy) 100%);
-            color: white; padding: 5rem 2rem 3rem; text-align: center; position: relative;
-            border-bottom: 1px solid rgba(197, 160, 101, 0.3);
-        }
-        .d-teacher-badge {
-            color: var(--color-gold); font-family: var(--font-serif); letter-spacing: 2px;
-            font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; display: block;
-        }
-        .d-teacher-name {
-            font-family: var(--font-serif); font-size: 3rem; font-weight: 900; margin-bottom: 0.5rem;
-        }
-        .d-subtitle { opacity: 0.8; font-weight: 300; }
-
-        .section { padding: 4rem 2rem; border-bottom: 1px solid #eee; }
-        .section-title {
-            font-family: var(--font-serif); font-size: 1.6rem; font-weight: 900; color: var(--color-navy-deep);
-            text-align: center; margin-bottom: 2.5rem; display: block;
-        }
         
-        .greeting-box {
-            background: white; padding: 2.5rem; text-align: center; border: 1px solid #eee;
-            box-shadow: var(--shadow-card); position: relative; border-radius: 4px;
-        }
-        .greeting-box::before {
-            content: '“'; font-family: serif; font-size: 4rem; color: var(--color-gold);
-            position: absolute; top: -10px; left: 20px; opacity: 0.3;
-        }
-        .greeting-text { white-space: pre-line; color: #333; font-weight: 500; font-family: var(--font-serif); }
+        #main-view { padding-bottom: 5rem; }
+        .main-header { background: linear-gradient(160deg, var(--color-navy-deep) 0%, var(--color-navy) 100%); color: white; padding: 4rem 2rem; text-align: center; border-bottom: 4px solid var(--color-gold); }
+        .main-logo-text { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 900; background: linear-gradient(90deg, var(--color-gold-light), var(--color-gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; letter-spacing: -1px; }
+        .main-slogan { font-size: 1.1rem; opacity: 0.8; font-weight: 300; letter-spacing: 0.2em; }
+        .faculty-title { margin-top: 25px; font-size: 1rem; color: var(--color-gold); text-transform: uppercase; letter-spacing: 3px; font-weight: 600; position: relative; display: inline-block; }
+        .faculty-title::after { content: ''; display: block; width: 40px; height: 1px; background: var(--color-gold); margin: 8px auto 0; opacity: 0.5; }
+        
+        .teacher-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding: 3rem 2rem; max-width: 900px; margin: 0 auto; }
+        .teacher-card-btn { background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: 8px; padding: 2.5rem 1rem; cursor: pointer; box-shadow: var(--shadow-card); transition: all 0.3s ease; text-align: center; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 180px; }
+        .teacher-card-btn.empty-slot { box-shadow: none; border: 1px dashed rgba(0,0,0,0.1); background: rgba(0,0,0,0.01); cursor: default; }
+        .teacher-card-btn.empty-slot:hover { transform: none; } .teacher-card-btn.empty-slot::before { display: none; }
+        .teacher-card-btn:not(.empty-slot)::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--color-navy); transition: 0.3s; }
+        .teacher-card-btn:not(.empty-slot):hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .teacher-card-btn:not(.empty-slot):hover::before { background: var(--color-gold); height: 5px; }
+        .t-subject { font-size: 0.8rem; color: var(--color-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.8rem; }
+        .t-name { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 900; color: var(--color-navy-deep); word-break: keep-all; }
 
+        .nav-bar { position: absolute; top: 20px; left: 20px; z-index: 100; }
+        .back-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 30px; cursor: pointer; font-size: 0.9rem; backdrop-filter: blur(5px); transition: 0.2s; display: flex; align-items: center; gap: 5px; }
+        .back-btn:hover { background: white; color: var(--color-navy); }
+        .detail-header { background: linear-gradient(160deg, var(--color-navy-deep) 0%, var(--color-navy) 100%); color: white; padding: 5rem 2rem 3rem; text-align: center; position: relative; border-bottom: 1px solid rgba(197, 160, 101, 0.3); }
+        .d-teacher-badge { color: var(--color-gold); font-family: var(--font-serif); letter-spacing: 2px; font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; display: block; }
+        .d-teacher-name { font-family: var(--font-serif); font-size: 3rem; font-weight: 900; margin-bottom: 0.5rem; }
+        .d-subtitle { opacity: 0.8; font-weight: 300; }
+        .section { padding: 4rem 2rem; border-bottom: 1px solid #eee; }
+        .section-title { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 900; color: var(--color-navy-deep); text-align: center; margin-bottom: 2.5rem; display: block; }
+        .greeting-box { background: white; padding: 2.5rem; text-align: center; border: 1px solid #eee; box-shadow: var(--shadow-card); position: relative; border-radius: 4px; }
+        .greeting-box::before { content: '“'; font-family: serif; font-size: 4rem; color: var(--color-gold); position: absolute; top: -10px; left: 20px; opacity: 0.3; }
+        .greeting-text { white-space: pre-line; color: #333; font-weight: 500; font-family: var(--font-serif); }
         .card-grid { display: grid; gap: 1.5rem; }
-        .info-card {
-            background: white; padding: 2rem; border-radius: 8px; box-shadow: var(--shadow-card);
-            position: relative; border: 1px solid rgba(0,0,0,0.05); transition: 0.3s;
-        }
+        .info-card { background: white; padding: 2rem; border-radius: 8px; box-shadow: var(--shadow-card); position: relative; border: 1px solid rgba(0,0,0,0.05); transition: 0.3s; }
         .info-card:hover { transform: translateY(-5px); }
         .test-card { border-top: 4px solid var(--color-navy); }
         .assign-card { border-top: 4px solid var(--color-red); }
         .video-card { border-top: 4px solid var(--color-gold); }
-
-        .card-badge {
-            background: var(--color-navy-deep); color: var(--color-gold); padding: 4px 10px;
-            font-size: 0.8rem; font-weight: bold; border-radius: 2px; margin-bottom: 10px; display: inline-block;
-        }
+        .card-badge { background: var(--color-navy-deep); color: var(--color-gold); padding: 4px 10px; font-size: 0.8rem; font-weight: bold; border-radius: 2px; margin-bottom: 10px; display: inline-block; }
         .card-title { font-family: var(--font-serif); font-weight: 900; font-size: 1.3rem; margin-bottom: 5px; color: var(--color-navy); }
         .card-desc { white-space: pre-line; color: #666; font-size: 0.95rem; margin-top: 10px; }
-
-        .rules-bg {
-            background: linear-gradient(145deg, var(--color-navy-deep), #1a2644);
-            padding: 2.5rem; border-radius: 8px; color: white; border: 1px solid rgba(197,160,101,0.2);
-        }
+        .rules-bg { background: linear-gradient(145deg, var(--color-navy-deep), #1a2644); padding: 2.5rem; border-radius: 8px; color: white; border: 1px solid rgba(197,160,101,0.2); }
         .rules-list li { list-style: none; position: relative; padding-left: 20px; margin-bottom: 15px; font-weight: 600; }
         .rules-list li::before { content: '■'; color: var(--color-red); position: absolute; left: 0; font-size: 0.8rem; top: 5px; }
-
         footer { background: var(--color-navy-deep); color: #888; padding: 3rem; text-align: center; font-size: 0.9rem; }
         
         #admin-controls { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; z-index: 999; }
         .btn { padding: 10px 20px; border-radius: 50px; border: none; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .btn-primary { background: var(--color-navy); color: white; }
         .btn-admin { background: #111; color: var(--color-gold); border: 1px solid var(--color-gold); }
-
         .editable-field { transition: 0.2s; }
         body.admin-mode .editable-field:hover { outline: 2px dashed var(--color-gold); background: rgba(197,160,101,0.1); cursor: text; color: black !important; }
         body.admin-mode .delete-btn { display: block; }
         .delete-btn { display: none; position: absolute; top: 15px; right: 15px; background: none; border: none; color: #999; cursor: pointer; font-weight: bold; }
+        
+        /* Loading */
+        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 99999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid var(--color-gold); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        @media (max-width: 768px) {
-            .teacher-grid { grid-template-columns: 1fr; }
-            .main-header { padding: 3rem 1.5rem; }
-        }
+        @media (max-width: 768px) { .teacher-grid { grid-template-columns: 1fr; } .main-header { padding: 3rem 1.5rem; } }
     </style>
 </head>
 <body>
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <p>데이터를 불러오는 중입니다...</p>
+    </div>
 
     <div class="container">
         <div id="main-view">
@@ -212,22 +92,12 @@
                 <p class="main-slogan">상위권으로 가는 지름길</p>
                 <div class="faculty-title">Professional Faculty</div>
             </header>
-
-            <div class="teacher-grid" id="teacher-list-container">
-                </div>
-            
-            <footer style="margin-top:auto;">
-                <p>Copyright © KUKHEEJAE. All rights reserved.</p>
-            </footer>
+            <div class="teacher-grid" id="teacher-list-container"></div>
+            <footer style="margin-top:auto;"><p>Copyright © KUKHEEJAE. All rights reserved.</p></footer>
         </div>
-
         <div id="detail-view" class="hidden">
-            <nav class="nav-bar">
-                <button class="back-btn" onclick="goHome()">← 전체 강사진 보기</button>
-            </nav>
-
+            <nav class="nav-bar"><button class="back-btn" onclick="goHome()">← 전체 강사진 보기</button></nav>
             <div id="dynamic-content"></div>
-
             <footer>
                 <p class="footer-quote editable-field" id="footer-quote">"압도적인 실력 차이는 심화에서 결정됩니다"</p>
                 <p>국희재수학전문학원 | <span id="footer-name"></span></p>
@@ -237,7 +107,7 @@
 
     <div id="admin-controls">
         <div id="admin-panel" class="hidden">
-            <button class="btn btn-primary" onclick="saveCurrentTeacher()">💾 현재 페이지 저장</button>
+            <button class="btn btn-primary" onclick="saveCurrentTeacher()">💾 저장 및 즉시 배포</button>
             <button class="btn" onclick="resetCurrentTeacher()">↻ 초기화</button>
             <button class="btn btn-admin" onclick="toggleAdmin()">닫기</button>
         </div>
@@ -245,27 +115,40 @@
     </div>
 
     <script>
+        // ===============================================================
+        // [★중요★] 아래 config 객체 안에 3단계에서 복사한 내용을 채워넣으세요!
+        // ===============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC7xlCN_PEZRKXGE7akJk7Xdz9UG7GFRxM",
+            authDomain: "kukheejae-web-2dc27.firebaseapp.com",
+            databaseURL: "https://kukheejae-web-2dc27-default-rtdb.firebaseio.com",
+            projectId: "kukheejae-web-2dc27",
+            storageBucket: "kukheejae-web-2dc27.firebasestorage.app",
+            messagingSenderId: "1042908871730",
+            appId: "1:1042908871730:web:b73e0400e5d4109b5f102b"
+        };
+        // ===============================================================
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Constants
         const DEFAULT_RULES = ["사전 연락 필수 (학부모 확인)", "결석 시 영상보강 + 인증 테스트", "과제 미흡 시 귀가 제한"];
         const DEFAULT_ASSIGN = ["AI 오답노트 제공", "매 수업 결과 문자 전송", "일일 테스트 미통과자 클리닉"];
         
         function createTeacher(id, name, subject, isDisabled = false) {
             return {
-                id: id,
-                name: name,
-                subject: subject,
-                isDisabled: isDisabled,
+                id: id, name: name, subject: subject, isDisabled: isDisabled,
                 subtitle: "2026 Winter Master Class",
-                greeting: `안녕하세요. 국희재 ${name}입니다.\n\n이번 겨울방학은 학생의 성적을 결정짓는 가장 중요한 시기입니다.\n최고의 콘텐츠와 관리로 보답하겠습니다.`,
-                tests: [
-                    { grade: "대상 학년", subject: "수업명 예시", time: "요일/시간", desc: "수업 상세 설명을 입력하세요." }
-                ],
+                greeting: `안녕하십니까. 국희재 ${name}입니다.\n\n수학 1등급을 가르는 결정적 차이는\n'얼마나 깊이 있게 파고들었는가'에서 판가름 납니다.\n\n학생이 흘린 땀방울이 헛되지 않도록\n압도적인 강의력과 빈틈없는 관리로\n반드시 최상의 결과를 증명해 드리겠습니다.`,
+                tests: [{ grade: "대상 학년", subject: "수업명 예시", time: "요일/시간", desc: "수업 상세 설명을 입력하세요." }],
                 assignments: { title: "Management", items: [...DEFAULT_ASSIGN] },
                 videos: { title: "Review System", items: ["고화질 복습 영상 제공", "24시간 Q&A 채널 운영"] },
                 rules: { title: "학습 규정", items: [...DEFAULT_RULES] }
             };
         }
 
-        // Faculty Data - 10명 풀 세팅 (백윤성T 추가됨)
         const INITIAL_DB = [
             createTeacher(0, "국희재T", "대표강사 / 고등부"),
             createTeacher(1, "정재봉T", "대표강사 / 고등부"),
@@ -276,7 +159,7 @@
             createTeacher(6, "오승주T", "대표강사 / 중,고등부"),
             createTeacher(7, "김도연T", "대표강사 / 초,중등부"),
             createTeacher(8, "김충현T", "대표강사 / 고등부"),
-            createTeacher(9, "백윤성T", "대표강사 / 수리논술") // 추가됨
+            createTeacher(9, "백윤성T", "대표강사 / 수리논술")
         ];
 
         let db = [];
@@ -284,74 +167,64 @@
         let isAdmin = false;
 
         function init() {
-            // 변경사항 바로 반영되도록 버전을 v7로 올림
-            const saved = localStorage.getItem('kukheejae_db_v7'); 
-            if(saved) {
-                try { db = JSON.parse(saved); } 
-                catch(e) { db = JSON.parse(JSON.stringify(INITIAL_DB)); }
-            } else {
-                db = JSON.parse(JSON.stringify(INITIAL_DB));
-            }
-            renderLobby();
+            // Firebase에서 실시간 데이터 리스닝
+            database.ref('teachers').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    db = data;
+                } else {
+                    // 데이터가 없으면 초기값으로 설정 후 저장
+                    db = JSON.parse(JSON.stringify(INITIAL_DB));
+                    database.ref('teachers').set(db);
+                }
+                renderLobby();
+                // 상세페이지 보고있다면 리렌더링
+                if(currentIdx !== null) renderDetail(db[currentIdx]);
+                
+                document.getElementById('loading-screen').style.display = 'none';
+            });
         }
 
         function renderLobby() {
             const container = document.getElementById('teacher-list-container');
             container.innerHTML = db.map((t, i) => {
-                if (t.isDisabled) {
-                    return `<div class="teacher-card-btn empty-slot"></div>`; 
-                }
-                return `
-                <div class="teacher-card-btn" onclick="openTeacher(${i})">
-                    <span class="t-subject">${t.subject}</span>
-                    <h3 class="t-name">${t.name}</h3>
-                </div>`;
+                if (t.isDisabled) return `<div class="teacher-card-btn empty-slot"></div>`;
+                return `<div class="teacher-card-btn" onclick="openTeacher(${i})"><span class="t-subject">${t.subject}</span><h3 class="t-name">${t.name}</h3></div>`;
             }).join('');
         }
 
         function openTeacher(idx) {
             if(db[idx].isDisabled) return;
-            
             currentIdx = idx;
-            const t = db[idx];
-            
             document.getElementById('main-view').classList.add('hidden');
             document.getElementById('detail-view').classList.remove('hidden');
-            document.getElementById('admin-btn').classList.remove('hidden'); 
-            
-            renderDetail(t);
+            document.getElementById('admin-btn').classList.remove('hidden');
+            renderDetail(db[idx]);
             window.scrollTo(0, 0);
         }
 
         function goHome() {
-            currentIdx = null;
-            isAdmin = false; 
+            currentIdx = null; isAdmin = false;
             document.body.classList.remove('admin-mode');
             document.getElementById('admin-panel').classList.add('hidden');
             document.getElementById('admin-btn').classList.add('hidden');
-            
             document.getElementById('detail-view').classList.add('hidden');
             document.getElementById('main-view').classList.remove('hidden');
-            
-            renderLobby(); 
+            renderLobby();
         }
 
         function renderDetail(t) {
+            if(!t) return; // 데이터 로딩 전 방어
             const content = document.getElementById('dynamic-content');
-            
-            const listHtml = (items, type) => items.map((item, i) => 
-                `<li class="editable-field" onblur="updateList('${type}', ${i}, this.innerText)" contenteditable="${isAdmin}">${item}</li>`
-            ).join('');
-
-            const testsHtml = t.tests.map((test, i) => `
+            const listHtml = (items, type) => items.map((item, i) => `<li class="editable-field" onblur="updateList('${type}', ${i}, this.innerText)" contenteditable="${isAdmin}">${item}</li>`).join('');
+            const testsHtml = t.tests ? t.tests.map((test, i) => `
                 <div class="info-card test-card">
                     <button class="delete-btn" onclick="delTest(${i})">✕</button>
                     <span class="card-badge">${test.grade}</span>
                     <h3 class="card-title editable-field" onblur="updateTest(${i}, 'subject', this.innerText)" contenteditable="${isAdmin}">${test.subject}</h3>
                     <div style="color:#c9242b; font-weight:bold; margin-bottom:10px;" class="editable-field" onblur="updateTest(${i}, 'time', this.innerText)" contenteditable="${isAdmin}">${test.time}</div>
                     <p class="card-desc editable-field" onblur="updateTest(${i}, 'desc', this.innerText)" contenteditable="${isAdmin}">${test.desc}</p>
-                </div>
-            `).join('');
+                </div>`).join('') : '';
 
             content.innerHTML = `
                 <header class="detail-header">
@@ -359,86 +232,36 @@
                     <h1 class="d-teacher-name editable-field" onblur="updateMeta('name', this.innerText)" contenteditable="${isAdmin}">${t.name}</h1>
                     <p class="d-subtitle editable-field" onblur="updateMeta('subtitle', this.innerText)" contenteditable="${isAdmin}">${t.subtitle}</p>
                 </header>
-
-                <div class="section">
-                    <h2 class="section-title">Greeting</h2>
-                    <div class="greeting-box">
-                        <div class="greeting-text editable-field" onblur="updateMeta('greeting', this.innerText)" contenteditable="${isAdmin}">${t.greeting}</div>
-                    </div>
-                </div>
-
-                <div class="section" style="background:#fcfcfc">
-                    <h2 class="section-title">Curriculum</h2>
-                    <div class="admin-toolbar" style="text-align:right; margin-bottom:10px; display:${isAdmin?'block':'none'}">
-                        <button class="btn btn-primary" onclick="addTest()">+ 강의 추가</button>
-                    </div>
-                    <div class="card-grid">${testsHtml}</div>
-                </div>
-
-                <div class="section">
-                    <h2 class="section-title">System</h2>
-                    <div class="card-grid">
-                        <div class="info-card assign-card">
-                            <h3 class="card-title editable-field" onblur="updateNest('assignments','title',this.innerText)" contenteditable="${isAdmin}">${t.assignments.title}</h3>
-                            <ul>${listHtml(t.assignments.items, 'assignments')}</ul>
-                        </div>
-                        <div class="info-card video-card">
-                            <h3 class="card-title editable-field" onblur="updateNest('videos','title',this.innerText)" contenteditable="${isAdmin}">${t.videos.title}</h3>
-                            <ul>${listHtml(t.videos.items, 'videos')}</ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <div class="rules-bg">
-                        <h3 class="section-title" style="color:#e6d2b5; margin-bottom:1.5rem;" class="editable-field" onblur="updateNest('rules','title',this.innerText)" contenteditable="${isAdmin}">${t.rules.title}</h3>
-                        <ul class="rules-list">
-                            ${listHtml(t.rules.items, 'rules')}
-                        </ul>
-                    </div>
-                </div>
-            `;
+                <div class="section"><h2 class="section-title">Greeting</h2><div class="greeting-box"><div class="greeting-text editable-field" onblur="updateMeta('greeting', this.innerText)" contenteditable="${isAdmin}">${t.greeting}</div></div></div>
+                <div class="section" style="background:#fcfcfc"><h2 class="section-title">Curriculum</h2><div class="admin-toolbar" style="text-align:right; margin-bottom:10px; display:${isAdmin?'block':'none'}"><button class="btn btn-primary" onclick="addTest()">+ 강의 추가</button></div><div class="card-grid">${testsHtml}</div></div>
+                <div class="section"><h2 class="section-title">System</h2><div class="card-grid"><div class="info-card assign-card"><h3 class="card-title editable-field" onblur="updateNest('assignments','title',this.innerText)" contenteditable="${isAdmin}">${t.assignments.title}</h3><ul>${listHtml(t.assignments.items, 'assignments')}</ul></div><div class="info-card video-card"><h3 class="card-title editable-field" onblur="updateNest('videos','title',this.innerText)" contenteditable="${isAdmin}">${t.videos.title}</h3><ul>${listHtml(t.videos.items, 'videos')}</ul></div></div></div>
+                <div class="section"><div class="rules-bg"><h3 class="section-title" style="color:#e6d2b5; margin-bottom:1.5rem;" class="editable-field" onblur="updateNest('rules','title',this.innerText)" contenteditable="${isAdmin}">${t.rules.title}</h3><ul class="rules-list">${listHtml(t.rules.items, 'rules')}</ul></div></div>`;
             document.getElementById('footer-name').innerText = t.name;
         }
 
-        function updateMeta(key, val) { db[currentIdx][key] = val; }
+        // --- Data Update Logic (Local + Firebase Sync) ---
+        // 수정할 때마다 db 변수만 바꾸는 게 아니라 Firebase로 즉시 전송하지는 않고, '저장' 버튼 누를 때 전송합니다.
+        // 다만, contenteditable 특성상 onblur로 데이터를 업데이트합니다.
+        function updateMeta(k, v) { db[currentIdx][k] = v; }
         function updateNest(p, k, v) { db[currentIdx][p][k] = v; }
-        function updateList(type, idx, val) { db[currentIdx][type].items[idx] = val; }
-        function updateTest(idx, key, val) { db[currentIdx].tests[idx][key] = val; }
-        
-        function addTest() { 
-            db[currentIdx].tests.push({grade:"대상", subject:"강좌명", time:"시간", desc:"설명"}); 
-            renderDetail(db[currentIdx]); 
-        }
-        function delTest(i) {
-            if(confirm('삭제합니까?')) {
-                db[currentIdx].tests.splice(i,1);
-                renderDetail(db[currentIdx]);
-            }
-        }
+        function updateList(t, i, v) { db[currentIdx][t].items[i] = v; }
+        function updateTest(i, k, v) { db[currentIdx].tests[i][k] = v; }
+        function addTest() { db[currentIdx].tests.push({grade:"대상", subject:"강좌명", time:"시간", desc:"설명"}); renderDetail(db[currentIdx]); }
+        function delTest(i) { if(confirm('삭제합니까?')) { db[currentIdx].tests.splice(i,1); renderDetail(db[currentIdx]); } }
 
         function reqAdmin() {
             const pw = prompt("관리자 비밀번호를 입력하세요.");
-            if(pw === '1234') { 
-                isAdmin = true;
-                document.body.classList.add('admin-mode');
-                document.getElementById('admin-panel').classList.remove('hidden');
-                document.getElementById('admin-btn').classList.add('hidden');
-                renderDetail(db[currentIdx]); 
-            } else { alert('비밀번호 오류'); }
+            if(pw === '1234') { isAdmin = true; document.body.classList.add('admin-mode'); document.getElementById('admin-panel').classList.remove('hidden'); document.getElementById('admin-btn').classList.add('hidden'); renderDetail(db[currentIdx]); } else { alert('비밀번호 오류'); }
         }
-
-        function toggleAdmin() {
-            isAdmin = false;
-            document.body.classList.remove('admin-mode');
-            document.getElementById('admin-panel').classList.add('hidden');
-            document.getElementById('admin-btn').classList.remove('hidden');
-            renderDetail(db[currentIdx]);
-        }
-
+        function toggleAdmin() { isAdmin = false; document.body.classList.remove('admin-mode'); document.getElementById('admin-panel').classList.add('hidden'); document.getElementById('admin-btn').classList.remove('hidden'); renderDetail(db[currentIdx]); }
+        
+        // [핵심] Firebase로 데이터 전송
         function saveCurrentTeacher() {
-            localStorage.setItem('kukheejae_db_v7', JSON.stringify(db));
-            alert(`✅ [${db[currentIdx].name}] 저장되었습니다.`);
+            // 전체를 덮어쓰거나, 현재 선생님 부분만 업데이트할 수 있습니다.
+            // 안전하게 현재 선생님 데이터만 업데이트합니다.
+            database.ref('teachers/' + currentIdx).set(db[currentIdx])
+                .then(() => { alert(`✅ [${db[currentIdx].name}] 내용이 서버에 저장되었습니다.\n모든 기기에서 즉시 확인 가능합니다.`); })
+                .catch((error) => { alert('저장 실패: ' + error.message); });
         }
 
         function resetCurrentTeacher() {
