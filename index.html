@@ -265,7 +265,7 @@
             };
         }
 
-        // Faculty Data
+        // Faculty Data - 10명 풀 세팅 (백윤성T 추가됨)
         const INITIAL_DB = [
             createTeacher(0, "국희재T", "대표강사 / 고등부"),
             createTeacher(1, "정재봉T", "대표강사 / 고등부"),
@@ -275,7 +275,8 @@
             createTeacher(5, "이창동T", "대표강사 / 고등부"),
             createTeacher(6, "오승주T", "대표강사 / 중,고등부"),
             createTeacher(7, "김도연T", "대표강사 / 초,중등부"),
-            createTeacher(8, "", "", true) // 빈칸
+            createTeacher(8, "김충현T", "대표강사 / 고등부"),
+            createTeacher(9, "백윤성T", "대표강사 / 수리논술") // 추가됨
         ];
 
         let db = [];
@@ -283,7 +284,8 @@
         let isAdmin = false;
 
         function init() {
-            const saved = localStorage.getItem('kukheejae_db_v5'); 
+            // 변경사항 바로 반영되도록 버전을 v7로 올림
+            const saved = localStorage.getItem('kukheejae_db_v7'); 
             if(saved) {
                 try { db = JSON.parse(saved); } 
                 catch(e) { db = JSON.parse(JSON.stringify(INITIAL_DB)); }
@@ -415,10 +417,9 @@
             }
         }
 
-        // [수정됨] 비밀번호 힌트 삭제
         function reqAdmin() {
             const pw = prompt("관리자 비밀번호를 입력하세요.");
-            if(pw === '1234') { // 실제 비밀번호
+            if(pw === '1234') { 
                 isAdmin = true;
                 document.body.classList.add('admin-mode');
                 document.getElementById('admin-panel').classList.remove('hidden');
@@ -436,7 +437,7 @@
         }
 
         function saveCurrentTeacher() {
-            localStorage.setItem('kukheejae_db_v5', JSON.stringify(db));
+            localStorage.setItem('kukheejae_db_v7', JSON.stringify(db));
             alert(`✅ [${db[currentIdx].name}] 저장되었습니다.`);
         }
 
